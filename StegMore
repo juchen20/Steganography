@@ -1,0 +1,889 @@
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.imageio.ImageIO;
+
+public class Steg {
+    public static void main(String[] args) throws Exception {
+
+        //System.out.println(binaryToString(getLeastSigBits("hide_text.png")));
+        ArrayList<Integer> a = new ArrayList();
+        a.add(2);
+        a.add(1);
+        a.add(0);
+        //DONT TOOUCH ABOVE THIS
+
+
+
+        //printArray(getFirstAndSecondLeastSigBits("Images/WinkyFace.png",a));
+        //doAll("Images/small_images");
+        //doAll("Images/big_images");
+
+     //   checkEverything("Images/","WideDogIsWide.png");
+
+       checkEverythingAfter("Images/", "LastBastionOfRadiance.png");
+
+      //  BufferedImage img = uncover(getLeastSigBits("Images/LastBastionOfRadiance.png",a),9000,9000);
+      //  ImageIO.write(img, "png", new File("uncovered_images/WhyBastionWhy.png"));
+
+      //  System.out.println(binaryToString(getLeastSigBitsFast("Images/TheGrassIsGreenerRotate.png",a)));
+
+
+
+    }
+
+    public static void printArray(int[] a){
+        for(int i=0;i<1000;i++)
+            System.out.print(a[i]);
+    }
+
+    public static void findHeader(int[] a, String name){
+        int[] heightBits = new int[32];
+        int[] widthBits = new int[32];
+        for (int i=0; i<heightBits.length; i++) heightBits[i] = a[i+1001];
+        for (int i=0; i<widthBits.length; i++) widthBits[i] = a[i+1033];
+
+        if (bits2int(heightBits) < 9000 && bits2int(widthBits) < 9000) {
+            System.out.println("Found Header in:" + name);
+            System.out.println("The Height is" + bits2int(heightBits));
+            System.out.println("The Width is" + bits2int(widthBits));
+        }
+        return;
+    }
+
+    public static void checkEverything(String dir, String filename) throws Exception{
+        File f = new File(filename);
+        if (!f.exists()) {
+            if (f.mkdir()) {
+                System.out.println("Directory is created!");
+            } else {
+                System.out.println("Failed to create directory!");
+            }
+        }
+
+
+        ArrayList<Integer> c = new ArrayList<>();
+        c.add(0);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1r1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2r1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12r1000.txt");
+        c.remove(0);
+        c.add(1);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1g1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2g1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12g1000.txt");
+        c.remove(0);
+        c.add(2);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1b1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2b1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12b1000.txt");
+        c.remove(0);
+        c.add(0);
+        c.add(1);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1rg1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2rg1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12rg1000.txt");
+        c.remove(0);
+        c.remove(0);
+        c.add(0);
+        c.add(2);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1rb1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2rb1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12rb1000.txt");
+        c.remove(0);
+        c.remove(0);
+        c.add(1);
+        c.add(2);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1gb1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2gb1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12gb1000.txt");
+        c.add(0);
+        write(getLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "1rgb1000.txt");
+        write(getSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "2rgb1000.txt");
+        write(getFirstAndSecondLeastSigBitsFast(dir +filename,c), filename +  "/" + (f.getName()).substring(0, f.getName().length() - 3) + "12rgb1000.txt");
+
+
+    }
+
+    public static void checkEverythingAfter(String dir, String filename) throws Exception{
+        File f = new File(filename);
+
+        ArrayList<Integer> c = new ArrayList<>();
+        c.add(0);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename  + "1r1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename + "2r1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename + "12r1000.txt");
+        c.remove(0);
+        c.add(1);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename + "1g1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename +  "2g1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename +  "12g1000.txt");
+        c.remove(0);
+        c.add(2);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename +  "1b1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename +  "2b1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename + "12b1000.txt");
+        c.remove(0);
+        c.add(0);
+        c.add(1);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename +  "1rg1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename + "2rg1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename + "12rg1000.txt");
+        c.remove(0);
+        c.remove(0);
+        c.add(0);
+        c.add(2);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename + "1rb1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename + "2rb1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename +  "12rb1000.txt");
+        c.remove(0);
+        c.remove(0);
+        c.add(1);
+        c.add(2);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename + "1gb1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename + "2gb1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename + "12gb1000.txt");
+        c.add(0);
+        findHeader(getLeastSigBitsFastAfter(dir +filename,c), filename + "1rgb1000.txt");
+        findHeader(getSecondLeastSigBitsFastAfter(dir +filename,c), filename + "2rgb1000.txt");
+        findHeader(getFirstAndSecondLeastSigBitsFastAfter(dir +filename,c), filename + "12rgb1000.txt");
+
+
+    }
+
+/*
+    public static void doAll(String d) throws Exception { //change the contents of the first arg to write to change what you want to do
+        File dir = new File(d);
+        ArrayList<Integer> c = new ArrayList<>();
+
+        c.add(0);
+        System.out.println("c size:" + c.size() + " c element:" + c.get(0));
+        for (File f : dir.listFiles())
+            // System.out.println(f.getName());
+            write(binaryToString(getFirstAndSecondLeastSigBits(d + "/" + f.getName(), c)), "12leastsigred/" + (f.getName()).substring(0, f.getName().length() - 3) + "red1000.txt");
+        c.remove(0);
+        c.add(1);
+        System.out.println("c size:" + c.size() + " c element:" + c.get(0));
+        for (File f : dir.listFiles())
+            // System.out.println(f.getName());
+            write(binaryToString(getFirstAndSecondLeastSigBits(d + "/" + f.getName(), c)), "12leastsiggreen/" + (f.getName()).substring(0, f.getName().length() - 3) + "green1000.txt");
+        c.remove(0);
+        c.add(2);
+        System.out.println("c size:" + c.size() + " c element:" + c.get(0));
+        for (File f : dir.listFiles())
+            // System.out.println(f.getName());
+            write(binaryToString(getFirstAndSecondLeastSigBits(d + "/" + f.getName(), c)), "12leastsigblue/" + (f.getName()).substring(0, f.getName().length() - 3) + "blue1000.txt");
+        c.remove(0);
+        c.add(0);
+        c.add(2);
+        System.out.println("c size:" + c.size() + " c element:" + c.get(0));
+        for (File f : dir.listFiles())
+            // System.out.println(f.getName());
+            write(binaryToString(getFirstAndSecondLeastSigBits(d + "/" + f.getName(), c)), "12leastsigredblue/" + (f.getName()).substring(0, f.getName().length() - 3) + "redblue1000.txt");
+        c.remove(0);
+        c.remove(0);
+        c.add(1);
+        c.add(0);
+        System.out.println("c size:" + c.size() + " c element:" + c.get(0));
+        for (File f : dir.listFiles())
+            // System.out.println(f.getName());
+            write(binaryToString(getFirstAndSecondLeastSigBits(d + "/" + f.getName(), c)), "12leastsigredgreen/" + (f.getName()).substring(0, f.getName().length() - 3) + "redgreen1000.txt");
+        c.remove(0);
+        c.remove(0);
+        c.add(2);
+        c.add(1);
+        System.out.println("c size:" + c.size() + " c element:" + c.get(0));
+        for (File f : dir.listFiles())
+            // System.out.println(f.getName());
+            write(binaryToString(getFirstAndSecondLeastSigBits(d + "/" + f.getName(), c)), "12leastsigbluegreen/" + (f.getName()).substring(0, f.getName().length() - 3) + "bluegreen1000.txt");
+    }
+*/
+    public static void write(int[] boo, String destination) throws IOException {
+        String s = Arrays.toString(boo);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(destination));
+        writer.write(s);
+        writer.close();
+    }
+
+    public static int[] getLeastSigBitsFast(String filename) throws Exception { //gets least significant bits
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<1000) {
+                    all.add(pixels[0] & 1);
+                    all.add(pixels[1] & 1);
+                    all.add(pixels[2] & 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+    public static int[] getLeastSigBits(String filename) throws Exception { //gets least significant bits
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (true) {
+                    all.add(pixels[0] & 1);
+                    all.add(pixels[1] & 1);
+                    all.add(pixels[2] & 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+
+
+
+    public static int[] getFirstAndSecondLeastSigBits(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (true) {
+                    if (red){
+                        all.add((pixels[0] & 2) >> 1);
+                        all.add(pixels[0] & 1);
+                    }
+                    if (green) {
+                        all.add((pixels[1] & 2) >> 1);
+                        all.add(pixels[1] & 1);
+                    }
+                    if (blue) {
+                        all.add((pixels[2] & 2)>>1);
+                        all.add(pixels[2] & 1);
+                    }
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+
+
+    public static int[] getFirstAndSecondLeastSigBitsFast(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<1000  ) {
+                    if (red){ all.add(pixels[0] & 1);
+                        all.add((pixels[0] & 2) >> 1);}
+                    if (green) {
+                        all.add(pixels[1] & 1);
+                        all.add((pixels[1] & 2) >> 1);
+                    }
+                    if (blue) {all.add(pixels[2] & 1);
+                        all.add((pixels[2] & 2)>>1);}
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+
+
+    public static int[] getFirstAndSecondLeastSigBitsFastAfter(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<0 ) {
+                    count++;
+                } else if(count<2000) {
+                    if (red){
+                        all.add((pixels[2] & 2) >> 1);
+                        all.add(pixels[2] & 1);
+                    }
+                    if (green) {
+                        all.add((pixels[1] & 2) >> 1);
+                        all.add(pixels[1] & 1);
+                    }
+                    if (blue) {;
+                        all.add((pixels[0] & 2)>>1);
+                        all.add(pixels[0] & 1);
+                    }
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+    public static int[] getLeastSigBitsFastAfter(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<0  ) {
+                    count++;
+                } else if(count<2000) {
+                    if (red) all.add(pixels[2] & 1);
+                    if (green) all.add(pixels[1] & 1);
+                    if (blue) all.add(pixels[0] & 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+    public static int[] getSecondLeastSigBitsFastAfter(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<0) {
+                    count++;
+                } else if(count<2000) {
+                    if (red) all.add((pixels[2] & 2) >> 1);
+                    if (green) all.add((pixels[1] & 2) >> 1);
+                    if (blue) all.add((pixels[0] & 2) >> 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+
+    public static int[] getLeastSigBits(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (true) {
+                    if (red) all.add(pixels[0] & 1);
+                    if (green) all.add(pixels[1] & 1);
+                    if (blue) all.add(pixels[2] & 1);
+
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+    public static int[] getLeastSigBitsFast(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<10000) {
+                    if (red) all.add(pixels[0] & 1);
+                    if (green) all.add(pixels[1] & 1);
+                    if (blue) all.add(pixels[2] & 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+    public static int[] getSecondLeastSigBitsFast(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count<1000) {
+                    if (red) all.add((pixels[0] & 2) >> 1);
+                    if (green) all.add((pixels[1] & 2) >> 1);
+                    if (blue) all.add((pixels[2] & 2) >> 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+    public static int[] getSecondLeastSigBits(String filename, ArrayList<Integer> p) throws Exception { //gets least significant bits
+        boolean red = false;
+        boolean green = false;
+        boolean blue = false;
+        if (p.contains(0))
+            red = true;
+        if (p.contains(1))
+            green = true;
+        if (p.contains(2))
+            blue = true;
+        BufferedImage image = ImageIO.read(new File(filename));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height of " + filename + ": " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        ArrayList<Integer> all = new ArrayList<>();
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (true) {
+                    if (red) all.add((pixels[0] & 2) >> 1);
+                    if (green) all.add((pixels[1] & 2) >> 1);
+                    if (blue) all.add((pixels[2] & 2) >> 1);
+                    count++;
+                }
+            }
+        }
+        int[] a = new int[all.size()];
+        for (int i = 0; i < all.size(); i++)
+            a[i] = all.get(i);
+        return a;
+    }
+
+    public static int binaryToUnsignedInt(int[] binary) { //binary array to unsigned int
+        int toReturn = 0;
+        for (int i = 0; i < binary.length; i++)
+            toReturn += binary[i] * (Math.pow(2, binary.length - 1 - i));
+        return toReturn;
+    }
+
+    public static String binaryToString(int[] binary) { //binary array to string
+        String toReturn = "";
+        int[][] chunks = getChunks(binary, 8);
+        for (int[] t : chunks)
+            toReturn += (char) (binaryArrayToInt(t));
+        return toReturn;
+    }
+
+    public static int[][] getChunks(int[] binary, int chunksize) { //split an array of ints into multiple arrays
+        if (binary.length % chunksize != 0)
+            System.err.println("Warning: length of binary is not divisible by chunksize (" + binary.length + ")");
+        int numChunks = binary.length / chunksize;
+        int[][] toReturn = new int[numChunks][];
+        for (int i = 0; i < numChunks; i++) {
+            toReturn[i] = Arrays.copyOfRange(binary, chunksize * i, chunksize * (i + 1));
+        }
+        return toReturn;
+    }
+
+    public static int arrayToInt(int[] a) { //convert an array of digits into an int
+        String s = "";
+        for (int i = 0; i < a.length; i++)
+            s += a[i];
+        return Integer.parseInt(s);
+    }
+
+    public static int binaryArrayToInt(int[] a) { //convert a binary array of digits into an int (unsigned I think)
+        String s = "";
+        for (int i = 0; i < a.length; i++)
+            s += a[i];
+        return Integer.parseInt(s, 2);
+    }
+
+    public static int[] listToArray(ArrayList<Integer> a) {
+        int[] q = new int[a.size()];
+        for (int i = 0; i < a.size(); i++)
+            q[i] = a.get(i);
+        return q;
+    }
+
+    public static BufferedImage uncover(int[] bitstring, int width, int height) {
+        // takes in an array of magnified bits and generates the hidden image
+        // can be called from other classes
+
+        ArrayList<Integer> pixelString = getPixelString(bitstring);
+        int newWidth = 276;//getWidth(pixelString);
+        System.out.println(newWidth);
+        int newHeight = 247;//getHeight(pixelString);
+        System.out.println(newHeight);
+        int[][] redMap = new int[newHeight][newWidth];
+        int[][] greenMap = new int[newHeight][newWidth];
+        int[][] blueMap = new int[newHeight][newWidth];
+
+        BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+        WritableRaster ras2 = newImage.getRaster();
+
+        int count = 1065;
+        for (int y=0; y<newHeight; y++) {
+            for (int x=0; x<newWidth; x++) {
+                setChannels(y, x, redMap, greenMap, blueMap, count, pixelString);
+                count+=24;
+                ras2.setPixel(x, y, new int[]{redMap[y][x],greenMap[y][x],blueMap[y][x]});
+            }
+        }
+        return newImage;
+    }
+
+    private static ArrayList<Integer> getPixelString(int[] bitstring) {
+        ArrayList<Integer> pixelString = new ArrayList<Integer>(2);
+        for (int i=0; i<bitstring.length; i++) pixelString.add(bitstring[i]);
+        return pixelString;
+    }
+
+    private static BufferedImage uncover(BufferedImage image) throws Exception{
+        // takes in an image passed through MagnifyBits.main (eg. altered_java.png) and generates the hidden image
+        // must be called from HiddenImage.main
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+        WritableRaster raster = image.getRaster();
+        int[][][] pixelMap = new int[height][width][3];
+        for (int y=0;y<height;y++) {
+            for (int x=0;x<width;x++) {
+                int[] pixel = raster.getPixel(x, y, (int[]) null);
+                pixelMap[y][x][0] = pixel[0];
+                pixelMap[y][x][1] = pixel[1];
+                pixelMap[y][x][2] = pixel[2];
+            }
+        }
+        ArrayList<Integer> pixelString = getPixelString(pixelMap);
+        int newWidth = getWidth(pixelString);
+        System.out.println(newWidth);
+        int newHeight = getHeight(pixelString);
+        System.out.println(newHeight);
+        int[][] redMap = new int[newHeight][newWidth];
+        int[][] greenMap = new int[newHeight][newWidth];
+        int[][] blueMap = new int[newHeight][newWidth];
+
+        BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+        WritableRaster ras2 = newImage.getRaster();
+
+        int count = 0;
+        for (int y=0; y<newHeight; y++) {
+            for (int x=0; x<newWidth; x++) {
+                System.out.println(x + " " + y);
+                setChannels(y, x, redMap, greenMap, blueMap, count, pixelString);
+                count+=24;
+                ras2.setPixel(x, y, new int[]{redMap[y][x],greenMap[y][x],blueMap[y][x]});
+            }
+        }
+        return newImage;
+    }
+
+    private static void setChannels(int i, int j, int[][] redMap, int[][] greenMap, int[][] blueMap, int count, ArrayList<Integer> pixelString) {
+        int c = count;
+        if (c >= pixelString.size()) return;
+        redMap[i][j] = getChannel(pixelString, c);
+        c+=8;
+        if (c >= pixelString.size()) return;
+        greenMap[i][j] = getChannel(pixelString, c);
+        c+=8;
+        if (c >= pixelString.size()) return;
+        blueMap[i][j] = getChannel(pixelString, c);
+
+
+    }
+
+    private static ArrayList<Integer> getPixelString(int[][][] pixelMap) {
+        ArrayList<Integer> pixelString = new ArrayList<Integer>(2);
+        for (int x=0; x<pixelMap.length; x++) {
+            for (int y=0; y<pixelMap[x].length; y++) {
+                for (int z=0; z<pixelMap[x][y].length; z++) {
+                    pixelString.add(int2bit(pixelMap[x][y][z]));
+                }
+            }
+        }
+        return pixelString;
+    }
+
+    private static int getChannel(ArrayList<Integer> pixelString, int count) {
+        int[] channelBits = new int[8];
+        for (int i=0;i<channelBits.length;i++) channelBits[i] = pixelString.get(count+i);
+        return bits2int(channelBits);
+    }
+
+    private static int getHeight(ArrayList<Integer> pixelString) {
+        int[] heightBits = new int[32];
+        for (int i=0; i<heightBits.length; i++) heightBits[i] = pixelString.get(i);
+        return bits2int(heightBits);
+    }
+
+    private static int bits2int(int[] bits) {
+        int val = 0;
+        for (int i=0; i<bits.length; i++) val+=(bits[bits.length-1-i]*Math.pow(2, i));
+        return val;
+    }
+
+    private static int getWidth(ArrayList<Integer> pixelString) {
+        int[] widthBits = new int[32];
+        for (int i=0; i<widthBits.length; i++) widthBits[i] = pixelString.get(i+32);
+        return bits2int(widthBits);
+    }
+    private static int int2bit(int n) {
+        if (n == 255) return 1;
+        else return 0;
+    }
+
+    public static void gettingStatistics() {
+        BufferedImage image = ImageIO.read(new File("Images/PuppyLeash.png"));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        System.out.println("Height: " + height + " Width: " + width);
+        WritableRaster raster = image.getRaster();
+        int count = 0;
+        int temp1 = 0;
+        int tempS = 0;
+        int dist[] = new int[8];
+        int numGroups = ((width * height) / 4) + ((width % 2)* height / 2) + ((height % 2)*width /2);
+        //    System.out.println(numGroups);
+        int groups[] = new int[numGroups];
+        int distSquare[] = new int[4096];
+
+        int[][] fullCopy = new int[height][width];
+        int numGroups2 = (width - 1) * (height-1);
+        int groups2[] = new int[numGroups2];
+        int distSquare2[] = new int[4096];
+
+
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                int[] pixels = raster.getPixel(c, r, (int[]) null);
+                if (count < 3200){
+                    //                 System.out.print((pixels[0] & 1) + "" +  (pixels[1] & 1) + "" +  (pixels[2] & 1));
+                    tempS = calculateGroup(r,c,width);
+                    groups[tempS] += calculateVal(pixels[0]&1, pixels[1]&1, pixels[2]&1, r,c);
+                    fullCopy[r][c] =  ((pixels[0] & 1) * 4) + ((pixels[1] & 1) * 2) + (pixels[2] & 1);
+                    temp1 =  ((pixels[0] & 1) * 4) + ((pixels[1] & 1) * 2) + (pixels[2] & 1);
+                    dist[temp1] += 1;
+                    //   count ++;
+                }
+            }
+        }
+        int i = 0; //count essentially
+        for (int r = 0; r < height-1; r++) {
+            for (int c = 0; c < width-1; c++) {
+                groups2[i]=((fullCopy[r][c] >> 0 & 1) * 1) + ((fullCopy[r][c] >> 1 & 1) * 2) +((fullCopy[r][c] >> 2 & 1) * 4) +
+                        ((fullCopy[r][c+1] >> 0 & 1) * 8) +((fullCopy[r][c] >> 1 & 1) * 16) +((fullCopy[r][c] >> 2 & 1) * 32) +
+                        ((fullCopy[r+1][c] >> 0 & 1) * 64) +((fullCopy[r+1][c] >> 1 & 1) * 128) +((fullCopy[r+1][c] >> 2 & 1) * 256) +
+                        ((fullCopy[r][c] >> 0 & 1) * 512) +((fullCopy[r][c] >> 0 & 1) * 1024) +((fullCopy[r][c] >> 0 & 1) * 2048);
+                i++;
+
+            }
+        }
+
+        for (int val: groups2) {
+            //if (val != 0) { // this is taken out later
+            distSquare2[val] += 1;
+            //}
+        }
+
+        for (int val: groups) {
+            //if (val != 0) { // this is taken out later
+            distSquare[val] += 1;
+            //}
+        }
+        System.out.println("");
+        int testing = findRangeStdDev(distSquare) / (width);
+        System.out.println(testing);
+        System.out.println(findRangeStdDev(distSquare2));
+
+        System.out.println(Arrays.toString(dist));
+
+        //  System.out.println(Arrays.toString(distSquare2));
+        // System.out.println(Arrays.toString(distSquare));
+
+    }
+
+    public static int findRangeStdDev(int[] distribution) {
+        int min = 999999999;
+        int max = -99;
+
+        for (int val: distribution) {
+            if (val < min && val != 0) {
+                min = val;
+            }
+            if (val > max) {
+                max = val;
+            }
+        }
+
+
+
+        return max - min;
+
+    }
+    public static int calculateGroup(int row, int column, int width) {
+        return ((row / 2) * width / 2) + (column / 2);
+
+    }
+
+
+
+    public static int calculateVal(int a, int b, int c, int r, int co) {
+        if (r % 2 == 0 && co % 2 == 0) {
+            return (int)((a * Math.pow(2, 11)) +(b * Math.pow(2, 10)) +(a * Math.pow(2, 9)));
+        }
+
+        if (r % 2 == 0 && co % 2 == 1) {
+            return (int)((a * Math.pow(2, 8)) +(b * Math.pow(2, 7)) +(a * Math.pow(2, 6)));
+        }
+
+        if (r % 2 == 1 && co % 2 == 0) {
+            return (int)((a * Math.pow(2, 5)) +(b * Math.pow(2, 4)) +(a * Math.pow(2, 3)));
+        }
+
+        if (r % 2 == 1 && co % 2 == 1) {
+            return (int)((a * Math.pow(2, 2)) +(b * Math.pow(2, 1)) +(a * Math.pow(2, 0)));
+        }
+        return -22;
+
+    }
+
+
+}
